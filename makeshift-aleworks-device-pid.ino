@@ -30,6 +30,14 @@ PID myPID(&actualTemperature, &pidOutput, &pointTemperature, 25, 1000, 9, DIRECT
 // Timestamp of the last status events
 unsigned long lastEventTimestamp;
 
+double convertTemp(String tempTo, double temp) {
+    if(tempTo == "F") {
+        return (temp * 9.0) / 5.0 + 32.0;
+    } else {
+        return  (temp - 32) / 1.8;
+    }
+}
+
  
  // Setup
 void setup() {
@@ -94,8 +102,8 @@ void loop() {
         
         // Convert values for output
         // convert pidOutput to 0-100
-        sprintf(tempInfo, "%2.2f", actualTemperature);
-        sprintf(pointInfo, "%2.2f", pointTemperature);
+        sprintf(tempInfo, "%2.2f", convertTemp("F", actualTemperature));
+        sprintf(pointInfo, "%2.2f", convertTemp("F", pointTemperature));
         sprintf(pwmInfo, " %2.2f", (pidOutput / 255) * 100);
         
         // Log to the serial
@@ -122,7 +130,7 @@ int setPointTemperature(String command)
     Serial.println("setPointTemperature called");
 
     // Convert to double
-    pointTemperature = (double) command.toInt();
+    pointTemperature = (double) convertTemp("C", command.toInt());
 
     Serial.println("Point temperature set");
     Serial.println(pointTemperature);
